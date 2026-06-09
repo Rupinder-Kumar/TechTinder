@@ -65,4 +65,4 @@ Developers currently use multiple platforms for networking, recruiting, collabor
 
 **High Level Architecture (HLD)**
 
-<img width="600" height="581" alt="image" src="https://github.com/user-attachments/assets/7695dbca-f535-4984-8b3e-fab9757d0a10" />
+<img width="725" height="581" alt="image" src="https://github.com/user-attachments/assets/7695dbca-f535-4984-8b3e-fab9757d0a10" />
