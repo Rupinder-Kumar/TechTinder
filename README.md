@@ -1,4 +1,3 @@
-
 **TechTinder — Connect. Collaborate. Build. 🚀**
 
 **Vision**
@@ -64,5 +63,5 @@ Developers currently use multiple platforms for networking, recruiting, collabor
 - CloudFront CDN
 
 **High Level Architecture (HLD)**
+<img width="1400" height="1123" alt="TechTinder HLD" src="https://github.com/user-attachments/assets/5e8bdbc5-3b39-464d-b56a-ec5588f68885" />
 
-<img width="725" height="581" alt="image" src="https://github.com/user-attachments/assets/7695dbca-f535-4984-8b3e-fab9757d0a10" />
