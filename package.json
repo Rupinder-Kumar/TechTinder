@@ -1,0 +1,24 @@
+{
+  "name": "techtinder",
+  "version": "1.0.0",
+  "description": "Tinder for developers",
+  "homepage": "https://github.com/Rupinder-Kumar/TechTinder#readme",
+  "bugs": {
+    "url": "https://github.com/Rupinder-Kumar/TechTinder/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rupinder-Kumar/TechTinder.git"
+  },
+  "license": "ISC",
+  "author": "Rupinder",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "start": "node src/app.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
