@@ -6,17 +6,34 @@ const app = express();
 const User = require("./models/user");
 
 
+app.use(express.json());
+
+
+// Feed API - fetching all users from users collection 
+
+app.get("/feed", async (req, res) => {
+  
+  try {
+
+  const users = await User.find({});
+  
+    if (users.length === 0) {
+      res.status(404).send("Users not found");
+    }
+
+    res.status(200).send(users);
+
+  } catch(err) {
+    res.status(400).send("Something went wrong"+ err);
+    console.error(err);
+  }
+
+});
+
 app.post("/signup", async (req, res) => {
 
   try {
-    const user = new User({
-      firstName: "Rupinder",
-      lastName: "Kumar",
-      emailId: "rupinder3972@gmail.com",
-      password: "Rupi@123",
-      age: 35,
-      gender: "M"
-    });
+    const user = new User(req.body);
 
     const response = await user.save();
 
