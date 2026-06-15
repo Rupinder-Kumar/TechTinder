@@ -2,56 +2,17 @@ const express = require("express");
 const connectDB = require("./config/database");
 
 const app = express();
+const cookieParser = require("cookie-parser");
+const jwt = require('jsonwebtoken');
 
 const User = require("./models/user");
 const { validateSignUpData } = require("./utils/validation");
+const { userAuth } = require("./middlewares/auth");
 const bcrypt = require("bcrypt");
 
 app.use(express.json());
+app.use(cookieParser());
 
-
-// Feed API - fetching all users from users collection 
-app.get("/feed", async (req, res) => {
-  
-  try {
-
-   const users = await User.find({});
-  
-    if (users.length === 0) {
-      res.status(404).send("Users not found");
-    }
-
-    res.status(200).send(users);
-
-  } catch(err) {
-    res.status(400).send("Something went wrong"+ err);
-    console.error(err);
-  }
-
-});
-
-//  User API - fetching specific user from users collection 
-app.get("/user", async (req, res) => {
-  
-  try {
-  
-    const userEmailId = req.body.emailId;
-    const user = await User.findOne({ emailId: userEmailId });
-  
-    if (!user || user.length === 0) {
-      res.status(404).send("User not found");
-    }
-
-    res.status(200).send(user);
-
-  } catch(err) {
-     res.status(400).json({
-      message: err.message
-    });
-    console.error(err);
-  }
-
-});
 
 // Signup API for creating user
 app.post("/signup", async (req, res) => {
@@ -103,6 +64,13 @@ app.post("/login", async (req,res) => {
 
         if(isPasswordValid) {
 
+
+          const token = await jwt.sign({ _id: user._id }, "tech@tinder$790", { expiresIn: "1d" });
+
+          // create a JWT token
+          // add token to cookie and send the response back to the user
+          res.cookie("token",token, { httpOnly: true, expires: new Date(Date.now() + 24 * 36000)});
+
           res.status(200).send("Login Successful!!");
 
         } else {
@@ -118,52 +86,20 @@ app.post("/login", async (req,res) => {
 })
 
 
-// Delete API - deleting user from users collection
-app.delete("/user", async (req, res) => {
-    const userId = req.body.userId;
-
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(userId);
-    res.status(200).send("User Deleted Successfully")
-  } catch(err) {
-     res.status(500).json({
-      message: err.message
+    const user = req.user;
+    res.send(user);
+   } catch(err) {
+        res.status(400).json({
+        message: err.message
     });
     console.error(err);
   }
 });
 
-// Update API - Updating user
-app.patch("/user/:userId", async (req, res) => {
-    const userId = req.params?.userId;
-    const data = req.body
+app.post("/sendConnectionRequest", userAuth, async (req,res) => {
 
-  try {
-    const ALLOWED_UPDATES = ["photoUrl","about","gender","age","skills"];
-
-    const isUpdateAllowed = Object.keys(data).every((k) => ALLOWED_UPDATES.includes(k));
-    
-    if(!isUpdateAllowed) {
-      throw new Error("Update not allowed!");
-    }
-
-    if(data?.skills.length > 10) {
-      throw new Error("Skills cannot be more than 10!");
-    }
-    
-    const user = await User.findByIdAndUpdate({_id: userId}, data, {
-        returnDocument:"before",
-        runValidators: true,
-      });
-
-    res.status(200).send("User Updated Successfully" + user);
-
-  } catch(err) {
-     res.status(400).json({
-      message: err.message
-    });
-    console.error(err);
-  }
 });
 
 connectDB().then(() => {
