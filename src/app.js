@@ -96,7 +96,7 @@ app.post("/login", async (req,res) => {
         const user = await User.findOne({ emailId: emailId });
 
         if(!user) {
-          throw new Error("User not present");
+          throw new Error("Invalid Credentials!");
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
