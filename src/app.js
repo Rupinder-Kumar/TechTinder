@@ -4,7 +4,8 @@ const connectDB = require("./config/database");
 const app = express();
 
 const User = require("./models/user");
-
+const { validateSignUpData } = require("./utils/validation");
+const bcrypt = require("bcrypt");
 
 app.use(express.json());
 
@@ -14,7 +15,7 @@ app.get("/feed", async (req, res) => {
   
   try {
 
-  const users = await User.find({});
+   const users = await User.find({});
   
     if (users.length === 0) {
       res.status(404).send("Users not found");
@@ -44,7 +45,7 @@ app.get("/user", async (req, res) => {
     res.status(200).send(user);
 
   } catch(err) {
-     res.status(500).json({
+     res.status(400).json({
       message: err.message
     });
     console.error(err);
@@ -56,7 +57,20 @@ app.get("/user", async (req, res) => {
 app.post("/signup", async (req, res) => {
 
   try {
-    const user = new User(req.body);
+    const { firstName, lastName, emailId, password } = req.body;
+
+    // validating user input
+    validateSignUpData(req);
+
+    // Encrypt the password   
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const user = new User({
+      firstName, 
+      lastName, 
+      emailId, 
+      password: passwordHash
+    });
 
     const response = await user.save();
 
@@ -66,7 +80,7 @@ app.post("/signup", async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+    res.status(400).json({
       message: err.message
     });
   }
@@ -89,8 +103,8 @@ app.delete("/user", async (req, res) => {
 
 // Update API - Updating user
 app.patch("/user/:userId", async (req, res) => {
-  const userId = req.params?.userId;
-  const data = req.body
+    const userId = req.params?.userId;
+    const data = req.body
 
   try {
     const ALLOWED_UPDATES = ["photoUrl","about","gender","age","skills"];
@@ -113,7 +127,7 @@ app.patch("/user/:userId", async (req, res) => {
     res.status(200).send("User Updated Successfully" + user);
 
   } catch(err) {
-     res.status(500).json({
+     res.status(400).json({
       message: err.message
     });
     console.error(err);
