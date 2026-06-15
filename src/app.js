@@ -86,6 +86,38 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+//Login API
+
+app.post("/login", async (req,res) => {
+      try {
+
+        const { emailId, password } = req.body;
+
+        const user = await User.findOne({ emailId: emailId });
+
+        if(!user) {
+          throw new Error("User not present");
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if(isPasswordValid) {
+
+          res.status(200).send("Login Successful!!");
+
+        } else {
+          throw new Error("Invalid Credentials!");
+        }
+
+      } catch(err) {
+        res.status(400).json({
+        message: err.message
+    });
+    console.error(err);
+  }
+})
+
+
 // Delete API - deleting user from users collection
 app.delete("/user", async (req, res) => {
     const userId = req.body.userId;
