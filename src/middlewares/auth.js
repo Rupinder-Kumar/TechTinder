@@ -6,7 +6,7 @@ const userAuth = async (req, res, next) => {
         const {token} = req.cookies;
 
         if(!token) {
-            throw new Error("Token is not valid!"); 
+            return res.status(401).send("Unauthorized Access! Please login to continue.");
         }
 
     // validate the token
@@ -14,7 +14,6 @@ const userAuth = async (req, res, next) => {
         // find the user
         const { _id } = decodedObj;
         const user = await User.findById(_id);
-        
         if(!user) {
           throw new Error("User does not exist!")
         }
